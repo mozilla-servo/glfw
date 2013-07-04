@@ -9,7 +9,9 @@ ifeq ($(UNAME),Linux)
     OSTYPE=linux
 endif
 
-CFLAGS = -I src
+CFLAGS = \
+	-I src \
+	-fPIC
 
 GLFW_SRC = \
 	$(addprefix src/,\
@@ -34,6 +36,20 @@ GLFW_SRC += \
 		cocoa_time.c \
 		cocoa_window.m \
 		nsgl_context.m)
+endif
+
+ifeq ($(OSTYPE),linux)
+GLFW_SRC += \
+	$(addprefix src/,\
+		glx_context.c \
+		x11_clipboard.c \
+		x11_gamma.c \
+		x11_init.c \
+		x11_joystick.c \
+		x11_monitor.c \
+		x11_time.c \
+		x11_unicode.c \
+		x11_window.c)
 endif
 
 GLFW_OBJS = $(patsubst %.m,%.o,$(patsubst %.c,%.o,$(GLFW_SRC)))
