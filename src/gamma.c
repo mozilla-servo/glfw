@@ -42,15 +42,15 @@
 //////                       GLFW internal API                      //////
 //////////////////////////////////////////////////////////////////////////
 
-void _glfwAllocGammaRamp(GLFWgammaramp* ramp, unsigned int size)
+void _glfwAllocGammaArrays(GLFWgammaramp* ramp, unsigned int size)
 {
-    ramp->red = (unsigned short*) malloc(size * sizeof(unsigned short));
-    ramp->green = (unsigned short*) malloc(size * sizeof(unsigned short));
-    ramp->blue = (unsigned short*) malloc(size * sizeof(unsigned short));
+    ramp->red = calloc(size, sizeof(unsigned short));
+    ramp->green = calloc(size, sizeof(unsigned short));
+    ramp->blue = calloc(size, sizeof(unsigned short));
     ramp->size = size;
 }
 
-void _glfwFreeGammaRamp(GLFWgammaramp* ramp)
+void _glfwFreeGammaArrays(GLFWgammaramp* ramp)
 {
     free(ramp->red);
     free(ramp->green);
@@ -111,7 +111,7 @@ GLFWAPI const GLFWgammaramp* glfwGetGammaRamp(GLFWmonitor* handle)
 
     _GLFW_REQUIRE_INIT_OR_RETURN(NULL);
 
-    _glfwFreeGammaRamp(&monitor->currentRamp);
+    _glfwFreeGammaArrays(&monitor->currentRamp);
     _glfwPlatformGetGammaRamp(monitor, &monitor->currentRamp);
 
     return &monitor->currentRamp;

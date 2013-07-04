@@ -6,13 +6,12 @@ GLFW is a free, Open Source, portable library for OpenGL and OpenGL ES
 application development.  It provides a simple, platform-independent API for
 creating windows and contexts, reading input, handling events, etc.
 
-Version 3.0.1 adds fixes for a number of bugs that together affect all supported
-platforms.  As this is a patch release, there are no API changes.
+Version 3.0.2 is *not yet described*.  As this is a patch release, there are no
+API changes.
 
 If you are new to GLFW, you may find the
 [introductory tutorial](http://www.glfw.org/docs/3.0/quick.html) for GLFW
-3 useful.  If
-you have used GLFW 2 in the past, there is a
+3 useful.  If you have used GLFW 2 in the past, there is a
 [transition guide](http://www.glfw.org/docs/3.0/moving.html) for moving to the
 GLFW 3 API.
 
@@ -70,8 +69,8 @@ directory of bundled applications to the `Contents/Resources` directory.
 
 #### Windows specific options
 
-`USE_MSVC_RUNTIME_LIBRARY_DLL` determines whether to use the DLL version of the
-Visual C++ runtime library.
+`USE_MSVC_RUNTIME_LIBRARY_DLL` determines whether to use the DLL version or the
+static library version of the Visual C++ runtime library.
 
 
 #### EGL specific options
@@ -100,18 +99,19 @@ See the [GLFW 3.0 documentation](http://www.glfw.org/docs/3.0/).
 
 ## Changelog
 
- - Bugfix: The wrong name was used for the CMake variable for the Xxf86vm
-           library
- - [Cocoa] Bugfix: `glfwGetFramebufferSize` return the size in screen
-                   coordinates
- - [Cocoa] Bugfix: Messages not supported on Mac OS X 10.6 were used without
-                   tests for precence
- - [Cocoa] Bugfix: Process transformation was not performed if menu bar creation
-                   was disabled
- - [Win32] Bugfix: Context creation was attempted even if no valid pixel formats
-                   had been found
- - [X11] Bugfix: Duplicate window position and window and framebuffer size
-                 events were reported
+ - Bugfix: The `-Wall` flag was not used with Clang and other GCC compatibles
+ - Bugfix: The default for `GLFW_ALPHA_BITS` was set to zero
+ - [Win32] Bugfix: The clipboard string was not freed on terminate
+ - [Win32] Bugfix: Entry points for OpenGL 1.0 and 1.1 functions were not
+                   returned by `glfwGetProcAddress`
+ - [Win32] Bugfix: The user32 and dwmapi module handles were not freed on
+                   library termination
+ - [Cocoa] Bugfix: The clipboard string was not freed on terminate
+ - [Cocoa] Bugfix: Selectors were used that are not declared by the 10.6 SDK
+ - [X11] Bugfix: Override-redirect windows were resized to the desired instead
+                 of the actual resolution of the selected video mode
+ - [X11] Bugfix: Screensaver override for full screen windows had a possible
+                 race condition
 
 
 ## Contact
@@ -125,11 +125,11 @@ If you have questions related to the use of GLFW, we have a
 channel `#glfw` on [Freenode](http://freenode.net/).
 
 If you have a bug to report, a patch to submit or a feature you'd like to
-request, please file it in one of the
-[issue trackers](https://sourceforge.net/p/glfw/_list/tickets) on SF.net.
+request, please file it in the
+[issue tracker](https://github.com/glfw/glfw/issues) on GitHub.
 
 Finally, if you're interested in helping out with the development of GLFW or
-porting it to your favorite platform, we have a
+porting it to your favorite platform, we have an occasionally active
 [developer's mailing list](https://lists.stacken.kth.se/mailman/listinfo/glfw-dev),
 or you could join us on `#glfw`.
 
@@ -177,10 +177,11 @@ skills.
  - Jonathan Mercier
  - Marcel Metz
  - Kenneth Miller
+ - Bruce Mitchener
  - Jeff Molofee
  - Jon Morton
  - Julian Møller
- - Ozzy at Orkysquad
+ - Ozzy
  - Peoro
  - Braden Pellett
  - Arturo J. Pérez
@@ -196,6 +197,7 @@ skills.
  - Bradley Smith
  - Julian Squires
  - Johannes Stein
+ - Justin Stoecker
  - Nathan Sweet
  - TTK-Bandit
  - Sergey Tikhomirov

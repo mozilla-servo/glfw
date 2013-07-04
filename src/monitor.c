@@ -180,7 +180,7 @@ void _glfwInputMonitorChange(void)
 
 _GLFWmonitor* _glfwCreateMonitor(const char* name, int widthMM, int heightMM)
 {
-    _GLFWmonitor* monitor = (_GLFWmonitor*) calloc(1, sizeof(_GLFWmonitor));
+    _GLFWmonitor* monitor = calloc(1, sizeof(_GLFWmonitor));
     monitor->name = strdup(name);
     monitor->widthMM = widthMM;
     monitor->heightMM = heightMM;
@@ -193,8 +193,8 @@ void _glfwDestroyMonitor(_GLFWmonitor* monitor)
     if (monitor == NULL)
         return;
 
-    _glfwFreeGammaRamp(&monitor->originalRamp);
-    _glfwFreeGammaRamp(&monitor->currentRamp);
+    _glfwFreeGammaArrays(&monitor->originalRamp);
+    _glfwFreeGammaArrays(&monitor->currentRamp);
 
     free(monitor->modes);
     free(monitor->name);

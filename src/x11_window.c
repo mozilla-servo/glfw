@@ -361,7 +361,7 @@ static void showCursor(_GLFWwindow* window)
 //
 static void enterFullscreenMode(_GLFWwindow* window)
 {
-    if (!_glfw.x11.saver.changed)
+    if (_glfw.x11.saver.count == 0)
     {
         // Remember old screen saver settings
         XGetScreenSaver(_glfw.x11.display,
@@ -373,9 +373,9 @@ static void enterFullscreenMode(_GLFWwindow* window)
         // Disable screen saver
         XSetScreenSaver(_glfw.x11.display, 0, 0, DontPreferBlanking,
                         DefaultExposures);
-
-        _glfw.x11.saver.changed = GL_TRUE;
     }
+
+    _glfw.x11.saver.count++;
 
     _glfwSetVideoMode(window->monitor, &window->videoMode);
 
@@ -455,7 +455,9 @@ static void leaveFullscreenMode(_GLFWwindow* window)
 {
     _glfwRestoreVideoMode(window->monitor);
 
-    if (_glfw.x11.saver.changed)
+    _glfw.x11.saver.count--;
+
+    if (_glfw.x11.saver.count == 0)
     {
         // Restore old screen saver settings
         XSetScreenSaver(_glfw.x11.display,
@@ -463,8 +465,6 @@ static void leaveFullscreenMode(_GLFWwindow* window)
                         _glfw.x11.saver.interval,
                         _glfw.x11.saver.blanking,
                         _glfw.x11.saver.exposure);
-
-        _glfw.x11.saver.changed = GL_FALSE;
     }
 
     if (_glfw.x11.hasEWMH &&
@@ -505,8 +505,7 @@ static void processEvent(XEvent *event)
         window = _glfwFindWindowByHandle(event->xany.window);
         if (window == NULL)
         {
-            // This is either an event for a destroyed GLFW window or an event
-            // of a type not currently supported by GLFW
+            // This is an event for a window that has already been destroyed
             return;
         }
     }
@@ -1010,34 +1009,36 @@ void _glfwPlatformGetWindowSize(_GLFWwindow* window, int* width, int* height)
 
 void _glfwPlatformSetWindowSize(_GLFWwindow* window, int width, int height)
 {
-    if (!window->resizable)
-    {
-        // Update window size restrictions to match new window size
-
-        XSizeHints* hints = XAllocSizeHints();
-
-        hints->flags |= (PMinSize | PMaxSize);
-        hints->min_width  = hints->max_width  = width;
-        hints->min_height = hints->max_height = height;
-
-        XSetWMNormalHints(_glfw.x11.display, window->x11.handle, hints);
-        XFree(hints);
-    }
-
     if (window->monitor)
     {
+        _glfwSetVideoMode(window->monitor, &window->videoMode);
+
         if (window->x11.overrideRedirect)
         {
             GLFWvidmode mode;
             _glfwPlatformGetVideoMode(window->monitor, &mode);
             XResizeWindow(_glfw.x11.display, window->x11.handle,
-                          window->videoMode.width, window->videoMode.height);
+                          mode.width, mode.height);
         }
-
-        _glfwSetVideoMode(window->monitor, &window->videoMode);
     }
     else
+    {
+        if (!window->resizable)
+        {
+            // Update window size restrictions to match new window size
+
+            XSizeHints* hints = XAllocSizeHints();
+
+            hints->flags |= (PMinSize | PMaxSize);
+            hints->min_width  = hints->max_width  = width;
+            hints->min_height = hints->max_height = height;
+
+            XSetWMNormalHints(_glfw.x11.display, window->x11.handle, hints);
+            XFree(hints);
+        }
+
         XResizeWindow(_glfw.x11.display, window->x11.handle, width, height);
+    }
 
     XFlush(_glfw.x11.display);
 }
