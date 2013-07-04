@@ -1,0 +1,8 @@
+#!/bin/bash
+
+SRCDIR="$(cd $(dirname $0) && pwd)"
+sed "s#%VPATH%#${SRCDIR}#" ${SRCDIR}/Makefile.in > Makefile
+
+mkdir -p src
+
+cp ${SRCDIR}/config.$(uname).h src/config.h

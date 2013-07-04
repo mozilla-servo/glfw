@@ -1,0 +1,61 @@
+VPATH=%VPATH%
+
+UNAME=$(shell uname)
+
+ifeq ($(UNAME),Darwin)
+    OSTYPE=darwin
+endif
+ifeq ($(UNAME),Linux)
+    OSTYPE=linux
+endif
+
+CFLAGS = -I src
+
+GLFW_SRC = \
+	$(addprefix src/,\
+		clipboard.c \
+		context.c \
+		gamma.c \
+		init.c \
+		input.c \
+		joystick.c \
+		monitor.c \
+		time.c \
+		window.c)
+
+ifeq ($(OSTYPE),darwin)
+GLFW_SRC += \
+	$(addprefix src/,\
+		cocoa_clipboard.c \
+		cocoa_gamma.c \
+		cocoa_init.c \
+		cocoa_joystick.c \
+		cocoa_monitor.c \
+		cocoa_time.c \
+		cocoa_window.m \
+		nsgl_context.m)
+endif
+
+GLFW_OBJS = $(patsubst %.m,%.o,$(patsubst %.c,%.o,$(GLFW_SRC)))
+
+.PHONY: all
+all: libglfw.dummy
+
+%.o: %.c
+	$(CC) $< -o $@ -c $(CFLAGS)
+
+%.o: %.m
+	$(CC) -ObjC $< -o $@ -c $(CFLAGS)
+
+libglfw.dummy: libglfw.a
+	touch $@
+
+libglfw.a: $(GLFW_OBJS)
+	$(AR) rcs $@ $(GLFW_OBJS)
+
+.PHONY: check
+check:
+
+.PHONY: clean
+clean:
+	rm -f src/*.o *.dummy *.a
