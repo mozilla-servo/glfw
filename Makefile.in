@@ -55,7 +55,7 @@ endif
 GLFW_OBJS = $(patsubst %.m,%.o,$(patsubst %.c,%.o,$(GLFW_SRC)))
 
 .PHONY: all
-all: libglfw3.dummy
+all: libglfw.dummy
 
 %.o: %.c
 	$(CC) $< -o $@ -c $(CFLAGS)
@@ -63,10 +63,10 @@ all: libglfw3.dummy
 %.o: %.m
 	$(CC) -ObjC $< -o $@ -c $(CFLAGS)
 
-libglfw3.dummy: libglfw3.a
+libglfw.dummy: libglfw.a
 	touch $@
 
-libglfw3.a: $(GLFW_OBJS)
+libglfw.a: $(GLFW_OBJS)
 	$(AR) rcs $@ $(GLFW_OBJS)
 
 .PHONY: check
