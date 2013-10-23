@@ -5,4 +5,4 @@ sed "s#%VPATH%#${SRCDIR}#" ${SRCDIR}/Makefile.in > Makefile
 
 mkdir -p src
 
-cp ${SRCDIR}/config.$(uname).h src/config.h
+cp ${SRCDIR}/glfw_config.$(uname).h src/glfw_config.h
