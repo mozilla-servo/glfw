@@ -6,41 +6,144 @@ GLFW is a free, Open Source, portable library for OpenGL and OpenGL ES
 application development.  It provides a simple, platform-independent API for
 creating windows and contexts, reading input, handling events, etc.
 
-Version 3.0.2 is *not yet described*.  As this is a patch release, there are no
+Version 3.0.4 is *not yet described*.  As this is a patch release, there are no
 API changes.
 
 If you are new to GLFW, you may find the
-[introductory tutorial](http://www.glfw.org/docs/3.0/quick.html) for GLFW
+[introductory tutorial](http://www.glfw.org/docs/latest/quick.html) for GLFW
 3 useful.  If you have used GLFW 2 in the past, there is a
-[transition guide](http://www.glfw.org/docs/3.0/moving.html) for moving to the
-GLFW 3 API.
+[transition guide](http://www.glfw.org/docs/latest/moving.html) for moving to
+the GLFW 3 API.
 
 
-## Compiling GLFW
+## Building GLFW
 
-To compile GLFW and the accompanying example programs, you will need the
-[CMake](http://www.cmake.org/) build system.
+These are the build instructions for the GLFW library itself.  For information
+on how to build programs that use GLFW, see the [Building programs using
+GLFW](http://www.glfw.org/docs/latest/build.html) guide.
 
 
 ### Dependencies
 
-#### X11 dependencies
+To compile GLFW and the accompanying example programs, you will need **CMake**,
+which will generate the project files or makefiles for your particular
+development environment.  If you are on a Unix-like system such as Linux or
+FreeBSD or have a package system like Fink, MacPorts, Cygwin or Homebrew, you
+can simply install its CMake package.  If not, you can get installers for
+Windows and OS X from the [CMake website](http://www.cmake.org/).
 
-To compile GLFW for X11 and GLX, you need to have the X and OpenGL header
-packages installed.  For example, on Ubuntu and other distributions based on
-Debian GNU/Linux, you need to install the `xorg-dev` and `libglu1-mesa-dev`
-packages.  Note that using header files from Mesa *will not* tie your binary to
-the Mesa implementation of OpenGL.
+Additional dependencies are listed below.
+
+
+#### Dependencies using Visual C++ on Windows
+
+The Microsoft Platform SDK that is installed along with Visual C++ contains all
+the necessary headers, link libraries and tools except for CMake.
+
+
+#### Dependencies with MinGW or MinGW-w64 on Windows
+
+Both the MinGW and the MinGW-w64 packages contain all the necessary headers,
+link libraries and tools except for CMake.
+
+
+#### Dependencies using MinGW or MinGW-w64 cross-compilation
+
+Both Cygwin and many Linux distributions have MinGW or MinGW-w64 packages.  For
+example, Cygwin has the `mingw64-i686-gcc` and `mingw64-x86_64-gcc` packages
+for 32- and 64-bit version of MinGW-w64, while Debian GNU/Linux and derivatives
+like Ubuntu have the `mingw-w64` package for both.
+
+GLFW has CMake toolchain files in the `CMake/` directory that allow for easy
+cross-compilation of Windows binaries.  To use these files you need to add a
+special parameter when generating the project files or makefiles:
+
+    cmake -DCMAKE_TOOLCHAIN_FILE=<toolchain-file> .
+
+The exact toolchain file to use depends on the prefix used by the MinGW or
+MinGW-w64 binaries on your system.  You can usually see this in the /usr
+directory.  For example, both the Debian/Ubuntu and Cygwin MinGW-w64 packages
+have `/usr/x86_64-w64-mingw32` for the 64-bit compilers, so the correct
+invocation would be:
+
+    cmake -DCMAKE_TOOLCHAIN_FILE=CMake/x86_64-w64-mingw32.cmake .
+
+For more details see the article
+[CMake Cross Compiling](http://www.paraview.org/Wiki/CMake_Cross_Compiling) on
+the CMake wiki.
+
+
+#### Dependencies using Xcode on OS X
+
+Xcode contains all necessary tools except for CMake.  The necessary headers and
+libraries are included in the core OS frameworks.  Xcode can be downloaded from
+the Mac App Store or from the ADC Member Center.
+
+
+#### Dependencies using Linux and X11
+
+To compile GLFW for X11, you need to have the X11 and OpenGL header packages
+installed, as well as the basic development tools like GCC and make.  For
+example, on Ubuntu and other distributions based on Debian GNU/Linux, you need
+to install the `xorg-dev` and `libglu1-mesa-dev` packages.  The former pulls in
+all X.org header packages and the latter pulls in the Mesa OpenGL and GLU
+packages.  GLFW itself doesn't need or use GLU, but some of the examples do.
+Note that using header files and libraries from Mesa during compilation *will
+not* tie your binaries to the Mesa implementation of OpenGL.
+
+
+### Generating files with CMake
+
+Once you have all necessary dependencies it is time to generate the project
+files or makefiles for your development environment.  CMake needs to know two
+paths for this: the path to the source directory and the target path for the
+generated files and compiled binaries.  If these are the same, it is called an
+in-tree build, otherwise it is called an out-of-tree build.
+
+One of several advantages of out-of-tree builds is that you can generate files
+and compile for different development environments using a single source tree.
+
+
+#### Generating files with the CMake command-line tool
+
+To make an in-tree build, enter the root directory of the GLFW source tree and
+run CMake.  The current directory is used as target path, while the path
+provided as an argument is used to find the source tree.
+
+    cd <glfw-root-dir>
+    cmake .
+
+To make an out-of-tree build, make another directory, enter it and run CMake
+with the (relative or absolute) path to the root of the source tree as an
+argument.
+
+    cd <glfw-root-dir>
+    mkdir build
+    cd build
+    cmake ..
+
+
+#### Generating files with the CMake GUI
+
+If you are using the GUI version, choose the root of the GLFW source tree as
+source location and the same directory or another, empty directory as the
+destination for binaries.  Choose *Configure*, change any options you wish to,
+*Configure* again to let the changes take effect and then *Generate*.
 
 
 ### CMake options
 
-There are a number of CMake build options for GLFW, although not all are
+The CMake files for GLFW provide a number of options, although not all are
 available on all supported platforms.  Some of these are de facto standards
 among CMake users and so have no `GLFW_` prefix.
 
+If you are using the GUI version of CMake, these are listed and can be changed
+from there.  If you are using the command-line version, use the `ccmake` tool.
+Some package systems like Ubuntu and other distributions based on Debian
+GNU/Linux have this tool in a separate `cmake-curses-gui` package.
 
-#### Shared options
+
+#### Shared CMake options
 
 `BUILD_SHARED_LIBS` determines whether GLFW is built as a static
 library or as a DLL / shared library / dynamic library.
@@ -49,6 +152,12 @@ library or as a DLL / shared library / dynamic library.
 installed.  If it is empty, it is installed to `$PREFIX/lib`.  If it is set to
 `64`, it is installed to `$PREFIX/lib64`.
 
+`GLFW_CLIENT_LIBRARY` determines which client API library to use.  If set to
+`opengl` the OpenGL library is used, if set to `glesv1` for the OpenGL ES 1.x
+library is used, or if set to `glesv2` the OpenGL ES 2.0 library is used.  The
+selected library and its header files must be present on the system for this to
+work.
+
 `GLFW_BUILD_EXAMPLES` determines whether the GLFW examples are built
 along with the library.
 
@@ -56,7 +165,7 @@ along with the library.
 built along with the library.
 
 
-#### Mac OS X specific options
+#### OS X specific CMake options
 
 `GLFW_USE_CHDIR` determines whether `glfwInit` changes the current
 directory of bundled applications to the `Contents/Resources` directory.
@@ -67,51 +176,74 @@ directory of bundled applications to the `Contents/Resources` directory.
 `GLFW_BUILD_UNIVERSAL` determines whether to build Universal Binaries.
 
 
-#### Windows specific options
+#### Windows specific CMake options
 
 `USE_MSVC_RUNTIME_LIBRARY_DLL` determines whether to use the DLL version or the
-static library version of the Visual C++ runtime library.
+static library version of the Visual C++ runtime library.  If set to `ON`, the
+DLL version of the Visual C++ library is used.  It is recommended to set this to
+`ON`, as this keeps the executable smaller and benefits from security and bug
+fix updates of the Visual C++ runtime.
+
+`GLFW_USE_DWM_SWAP_INTERVAL` determines whether the swap interval is set even
+when DWM compositing is enabled.  If this is `ON`, the swap interval is set even
+if DWM is enabled.  It is recommended to set this to `OFF`, as doing otherwise
+can lead to severe jitter.
+
+`GLFW_USE_OPTIMUS_HPG` determines whether to export the `NvOptimusEnablement`
+symbol, which forces the use of the high-performance GPU on nVidia Optimus
+systems.
 
 
-#### EGL specific options
+#### EGL specific CMake options
 
 `GLFW_USE_EGL` determines whether to use EGL instead of the platform-specific
 context creation API.  Note that EGL is not yet provided on all supported
 platforms.
 
-`GLFW_CLIENT_LIBRARY` determines which client API library to use.  If set to
-`opengl` the OpenGL library is used, if set to `glesv1` for the OpenGL ES 1.x
-library is used, or if set to `glesv2` the OpenGL ES 2.0 library is used.  The
-selected library and its header files must be present on the system for this to
-work.
-
 
 ## Installing GLFW
 
 A rudimentary installation target is provided for all supported platforms via
-CMake.
+CMake.  If you are building from the command-line, use the `install` target.
+
+    sudo make install
+
+If you are using an IDE, run the generated install target from the IDE.
 
 
 ## Using GLFW
 
-See the [GLFW 3.0 documentation](http://www.glfw.org/docs/3.0/).
+See the [GLFW documentation](http://www.glfw.org/docs/latest/).
 
 
 ## Changelog
 
- - Bugfix: The `-Wall` flag was not used with Clang and other GCC compatibles
- - Bugfix: The default for `GLFW_ALPHA_BITS` was set to zero
- - [Win32] Bugfix: The clipboard string was not freed on terminate
- - [Win32] Bugfix: Entry points for OpenGL 1.0 and 1.1 functions were not
-                   returned by `glfwGetProcAddress`
- - [Win32] Bugfix: The user32 and dwmapi module handles were not freed on
-                   library termination
- - [Cocoa] Bugfix: The clipboard string was not freed on terminate
- - [Cocoa] Bugfix: Selectors were used that are not declared by the 10.6 SDK
- - [X11] Bugfix: Override-redirect windows were resized to the desired instead
-                 of the actual resolution of the selected video mode
- - [X11] Bugfix: Screensaver override for full screen windows had a possible
-                 race condition
+ - Renamed configuration header to `glfw_config.h` to avoid conflicts
+ - Bugfix: The `glfw3.pc` file did not respect the `LIB_SUFFIX` CMake option
+ - [Win32] Bugfix: Removed joystick axis value negation left over from GLFW 2
+ - [Win32] Bugfix: Restoring windows using the Win+D hot key did not trigger the
+                   focus callback
+ - [Win32] Bugfix: The disabled cursor mode clip rectangle was updated for
+                   unfocused windows
+ - [Cocoa] Added dependency on CoreVideo framework for refresh rate retrieval
+ - [Cocoa] Enabled Lion full screen for resizable windowed mode windows
+ - [Cocoa] Bugfix: The `GLFW_KEY_GRAVE_ACCENT` key was reported as
+                   `GLFW_KEY_WORLD_1` and vice versa
+ - [Cocoa] Bugfix: The `GLFW_KEY_F13` key was reported as
+                   `GLFW_KEY_PRINT_SCREEN`
+ - [Cocoa] Bugfix: Implicit conversion from `NSUInteger` to int caused warnings
+                   with Xcode 5
+ - [Cocoa] Bugfix: Use of undeclared selectors with `@selector` caused warnings
+                   with Xcode 5
+ - [Cocoa] Bugfix: The cursor remained visible if moved onto client area after
+                   having been set to hidden outside it
+ - [Cocoa] Bugfix: The refresh rate was zero for all modes of certain monitors
+ - [Cocoa] Bugfix: The `install_name` field of the dynamic library was not set
+ - [Cocoa] Bugfix: Full screen windows were never reported as having focus
+ - [Cocoa] Bugfix: A superfluous I/O flag test prevented video modes from being
+                   listed for Thunderbolt monitor
+ - [X11] Added setting of the `WM_CLASS` property to the initial window title
+ - [X11] Bugfix: Removed joystick axis value negation left over from GLFW 2
 
 
 ## Contact
@@ -141,13 +273,16 @@ skills.
 
  - Bobyshev Alexander
  - artblanc
+ - arturo
  - Matt Arsenault
  - Keith Bauer
  - John Bartholomew
  - Niklas Behrens
  - Niklas Bergström
+ - Doug Binks
  - blanco
  - Lambert Clara
+ - Andrew Corrigan
  - Noel Cower
  - Jarrod Davis
  - Olivier Delannoy
@@ -180,11 +315,14 @@ skills.
  - Bruce Mitchener
  - Jeff Molofee
  - Jon Morton
+ - Pierre Moulon
  - Julian Møller
  - Ozzy
+ - Andri Pálsson
  - Peoro
  - Braden Pellett
  - Arturo J. Pérez
+ - Pieroman
  - Jorge Rodriguez
  - Ed Ropple
  - Riku Salminen
@@ -192,6 +330,7 @@ skills.
  - Matt Sealey
  - SephiRok
  - Steve Sexton
+ - Systemcluster
  - Dmitri Shuralyov
  - Daniel Skorupski
  - Bradley Smith
@@ -202,6 +341,7 @@ skills.
  - TTK-Bandit
  - Sergey Tikhomirov
  - Samuli Tuomola
+ - urraka
  - Jari Vetoniemi
  - Simon Voordouw
  - Torsten Walluhn

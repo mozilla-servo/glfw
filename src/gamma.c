@@ -1,8 +1,5 @@
 //========================================================================
-// GLFW - An OpenGL library
-// Platform:    Any
-// API version: 3.0
-// WWW:         http://www.glfw.org/
+// GLFW 3.0 - www.glfw.org
 //------------------------------------------------------------------------
 // Copyright (c) 2010 Camilla Berglund <elmindreda@elmindreda.org>
 //
@@ -81,18 +78,16 @@ GLFWAPI void glfwSetGamma(GLFWmonitor* handle, float gamma)
 
     for (i = 0;  i < 256;  i++)
     {
-        float value;
+        double value;
 
         // Calculate intensity
-        value = i / 255.f;
+        value = i / 255.0;
         // Apply gamma curve
-        value = (float) pow(value, 1.f / gamma) * 65535.f + 0.5f;
+        value = pow(value, 1.0 / gamma) * 65535.0 + 0.5;
 
         // Clamp to value range
-        if (value < 0.f)
-            value = 0.f;
-        else if (value > 65535.f)
-            value = 65535.f;
+        if (value > 65535.0)
+            value = 65535.0;
 
         values[i] = (unsigned short) value;
     }
