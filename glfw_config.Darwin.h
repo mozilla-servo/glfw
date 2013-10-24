@@ -3,4 +3,4 @@
 #define _GLFW_USE_CHDIR
 #define _GLFW_USE_MENUBAR
 #define _GLFW_USE_OPENGL
-#define _GLFW_VERSION_FULL "3.0.2"
+#define _GLFW_VERSION_FULL "3.0.4"
