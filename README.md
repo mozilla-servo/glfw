@@ -82,6 +82,8 @@ guide in the GLFW documentation.
                  and Compiz
  - [X11] Bugfix: The `pthread.h` header was not included by the GLX platform
                  header.
+ - Added `glfwPostEmptyEvent` for allowing secondary threads to cause
+   `glfwWaitEvents` to return
 
 
 ## Contact
