@@ -11,6 +11,7 @@ endif
 
 CFLAGS = \
 	-I src \
+	-D_GLFW_USE_CONFIG_H \
 	-fPIC
 
 GLFW_SRC = \
