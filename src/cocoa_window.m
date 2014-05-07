@@ -67,7 +67,7 @@ static void enterFullscreenMode(_GLFWwindow* window)
                              withOptions:options];
 
     // HACK: Synthesize focus event as window does not become key when the view
-    // is made full screen
+    //       is made full screen
     // TODO: Remove this when moving to a full screen window
     _glfwInputWindowFocus(window, GL_TRUE);
 }
@@ -80,7 +80,7 @@ static void leaveFullscreenMode(_GLFWwindow* window)
         return;
 
     // HACK: Synthesize focus event as window does not become key when the view
-    // is made full screen
+    //       is made full screen
     // TODO: Remove this when moving to a full screen window
     _glfwInputWindowFocus(window, GL_FALSE);
 
@@ -105,7 +105,7 @@ static float transformY(float y)
 static NSRect convertRectToBacking(_GLFWwindow* window, NSRect contentRect)
 {
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= 1070
-    if (floor(NSAppKitVersionNumber) >= NSAppKitVersionNumber10_7)
+    if (floor(NSAppKitVersionNumber) > NSAppKitVersionNumber10_6)
         return [window->ns.view convertRectToBacking:contentRect];
     else
 #endif /*MAC_OS_X_VERSION_MAX_ALLOWED*/
@@ -266,7 +266,6 @@ static int translateFlags(NSUInteger flags)
 static int translateKey(unsigned int key)
 {
     // Keyboard symbol translation table
-    // TODO: Need to find mappings for F13-F15, volume down/up/mute, and eject.
     static const unsigned int table[128] =
     {
         /* 00 */ GLFW_KEY_A,
@@ -635,7 +634,7 @@ static int translateKey(unsigned int key)
     double deltaX, deltaY;
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= 1070
-    if (floor(NSAppKitVersionNumber) >= NSAppKitVersionNumber10_7)
+    if (floor(NSAppKitVersionNumber) > NSAppKitVersionNumber10_6)
     {
         deltaX = [event scrollingDeltaX];
         deltaY = [event scrollingDeltaY];
@@ -796,6 +795,19 @@ static void createMenuBar(void)
                           action:@selector(arrangeInFront:)
                    keyEquivalent:@""];
 
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= 1070
+    if (floor(NSAppKitVersionNumber) > NSAppKitVersionNumber10_6)
+    {
+        // TODO: Make this appear at the bottom of the menu (for consistency)
+
+        [windowMenu addItem:[NSMenuItem separatorItem]];
+        [[windowMenu addItemWithTitle:@"Enter Full Screen"
+                               action:@selector(toggleFullScreen:)
+                        keyEquivalent:@"f"]
+            setKeyEquivalentModifierMask:NSControlKeyMask | NSCommandKeyMask];
+    }
+#endif /*MAC_OS_X_VERSION_MAX_ALLOWED*/
+
     // Prior to Snow Leopard, we need to use this oddly-named semi-private API
     // to get the application menu working properly.
     SEL setAppleMenuSelector = NSSelectorFromString(@"setAppleMenu:");
@@ -814,13 +826,8 @@ static GLboolean initializeAppKit(void)
     // Implicitly create shared NSApplication instance
     [GLFWApplication sharedApplication];
 
-    // If we get here, the application is unbundled
-    ProcessSerialNumber psn = { 0, kCurrentProcess };
-    TransformProcessType(&psn, kProcessTransformToForegroundApplication);
-
-    // Having the app in front of the terminal window is also generally
-    // handy.  There is an NSApplication API to do this, but...
-    SetFrontProcess(&psn);
+    // In case we are unbundled, make us a proper UI application
+    [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
 
 #if defined(_GLFW_USE_MENUBAR)
     // Menu bar setup must go between sharedApplication above and
@@ -867,7 +874,7 @@ static GLboolean createWindow(_GLFWwindow* window,
     window->ns.view = [[GLFWContentView alloc] initWithGlfwWindow:window];
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= 1070
-    if (floor(NSAppKitVersionNumber) >= NSAppKitVersionNumber10_7)
+    if (floor(NSAppKitVersionNumber) > NSAppKitVersionNumber10_6)
     {
         [window->ns.view setWantsBestResolutionOpenGLSurface:YES];
 
@@ -883,7 +890,7 @@ static GLboolean createWindow(_GLFWwindow* window,
     [window->ns.object center];
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= 1070
-    if (floor(NSAppKitVersionNumber) >= NSAppKitVersionNumber10_7)
+    if (floor(NSAppKitVersionNumber) > NSAppKitVersionNumber10_6)
         [window->ns.object setRestorable:NO];
 #endif /*MAC_OS_X_VERSION_MAX_ALLOWED*/
 
@@ -1027,6 +1034,12 @@ void _glfwPlatformRestoreWindow(_GLFWwindow* window)
 
 void _glfwPlatformShowWindow(_GLFWwindow* window)
 {
+    // Make us the active application
+    // HACK: This has been moved here from initializeAppKit to prevent
+    //       applications using only hidden windows from being activated, but
+    //       should probably not be done every time any window is shown
+    [NSApp activateIgnoringOtherApps:YES];
+
     [window->ns.object makeKeyAndOrderFront:nil];
     _glfwInputWindowVisibility(window, GL_TRUE);
 }
