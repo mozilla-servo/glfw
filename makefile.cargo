@@ -1,0 +1,6 @@
+SRC_DIR = $(shell pwd)
+
+all:
+	cd $(OUT_DIR) && cmake -DCMAKE_C_FLAGS=-fPIC -DGLFW_BUILD_EXAMPLES=OFF -DGLFW_BUILD_TESTS=OFF -DGLFW_BUILD_DOCS=OFF $(SRC_DIR)
+	cd $(OUT_DIR) && make
+	cp $(OUT_DIR)/src/libglfw3.a $(OUT_DIR)

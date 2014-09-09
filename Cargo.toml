@@ -1,0 +1,10 @@
+[package]
+name = "glfw-sys"
+version = "3.0.4"
+authors = ["Camilla Berglund <elmindreda@elmindreda.org>"]
+
+build = "make -f makefile.cargo"
+
+[lib]
+name = "glfw-sys"
+path = "lib.rs"

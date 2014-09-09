@@ -68,3 +68,6 @@ tests/title
 tests/version
 tests/windows
 
+# Cargo
+/Cargo.lock
+/target
