@@ -188,6 +188,7 @@ skills.
  - Jari Vetoniemi
  - Simon Voordouw
  - Torsten Walluhn
+ - Patrick Walton
  - Jay Weisskopf
  - Frank Wille
  - yuriks
