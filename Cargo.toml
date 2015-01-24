@@ -5,6 +5,13 @@ authors = ["Camilla Berglund <elmindreda@elmindreda.org>"]
 
 build = "make -f makefile.cargo"
 
+description = "An Open Source, multi-platform library for creating windows with OpenGL contexts and receiving input and events"
+documentation = "http://www.glfw.org/documentation.html"
+homepage = "http://www.glfw.org/"
+repository = "https://github.com/servo/glfw"
+readme = "README.md"
+license = "Zlib/Libpng"
+
 [lib]
 name = "glfw-sys"
 path = "lib.rs"
