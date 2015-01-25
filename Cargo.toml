@@ -1,6 +1,6 @@
 [package]
 name = "glfw-sys"
-version = "3.0.4"
+version = "3.0.41"
 authors = ["Camilla Berglund <elmindreda@elmindreda.org>"]
 
 build = "build.rs"
