@@ -1,8 +1,8 @@
 #![allow(unstable)]
 
-use std::io::Command;
-use std::io::process::StdioContainer;
-use std::io::fs;
+use std::old_io::Command;
+use std::old_io::process::StdioContainer;
+use std::old_io::fs;
 
 fn main() {
     Command::new("cmake")
