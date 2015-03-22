@@ -1,8 +1,6 @@
-#![allow(unstable)]
-
-use std::old_io::Command;
-use std::old_io::process::StdioContainer;
-use std::old_io::fs;
+use std::process::Command;
+use std::path::Path;
+use std::fs;
 
 fn main() {
     Command::new("cmake")
@@ -11,16 +9,12 @@ fn main() {
             .arg("-DGLFW_BUILD_TESTS=OFF")
             .arg("-DGLFW_BUILD_DOCS=OFF")
             .arg(env!("CARGO_MANIFEST_DIR"))
-            .cwd(&Path::new(env!("OUT_DIR")))
-            .stdout(StdioContainer::InheritFd(1))
-            .stderr(StdioContainer::InheritFd(2))
+            .current_dir(&Path::new(env!("OUT_DIR")))
             .status()
             .ok().expect("Failed to build with cmake");
 
     Command::new("make")
-            .cwd(&Path::new(env!("OUT_DIR")))
-            .stdout(StdioContainer::InheritFd(1))
-            .stderr(StdioContainer::InheritFd(2))
+            .current_dir(&Path::new(env!("OUT_DIR")))
             .status()
             .ok().expect("Failed to build with make");
 
