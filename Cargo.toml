@@ -1,6 +1,6 @@
 [package]
 name = "glfw-sys"
-version = "3.1.0"
+version = "3.1.2"
 authors = ["Camilla Berglund <elmindreda@elmindreda.org>"]
 
 build = "build.rs"
@@ -13,5 +13,5 @@ readme = "README.md"
 license = "Zlib/Libpng"
 
 [lib]
-name = "glfw-sys"
+name = "glfw_sys"
 path = "lib.rs"
