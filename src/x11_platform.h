@@ -108,6 +108,9 @@ typedef struct _GLFWlibraryX11
     Cursor          cursor;
     XContext        context;
 
+    // File descriptors for glfwPostEmptyEvent()
+    int             emptyEventFDs[2];
+
     // Window manager atoms
     Atom            WM_STATE;
     Atom            WM_DELETE_WINDOW;
@@ -127,6 +130,7 @@ typedef struct _GLFWlibraryX11
     Atom            CLIPBOARD;
     Atom            CLIPBOARD_MANAGER;
     Atom            SAVE_TARGETS;
+    Atom            _NULL;
     Atom            UTF8_STRING;
     Atom            COMPOUND_STRING;
     Atom            ATOM_PAIR;

@@ -1,0 +1,8 @@
+#!/bin/bash
+
+SRCDIR="$(cd $(dirname $0) && pwd)"
+sed "s#%VPATH%#${SRCDIR}#" ${SRCDIR}/Makefile.in > Makefile
+
+mkdir -p src
+
+cp ${SRCDIR}/glfw_config.$(uname).h src/glfw_config.h

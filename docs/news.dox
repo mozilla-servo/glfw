@@ -5,6 +5,15 @@
 @tableofcontents
 
 
+@section news_31 New features in version 3.1
+
+@subsection news_31_emptyevent Empty event support
+
+GLFW now provides the @ref glfwPostEmptyEvent function for posting an empty
+event from a secondary thread to the main thread event queue, causing @ref
+glfwWaitEvents to return.
+
+
 @section news_30 New features in version 3.0
 
 @subsection news_30_cmake CMake build system

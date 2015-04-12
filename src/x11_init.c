@@ -29,9 +29,12 @@
 
 #include <X11/Xresource.h>
 
+#include <fcntl.h>
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
+#include <stdio.h>
+#include <unistd.h>
 
 
 // Translate an X11 key code to a GLFW key code.
@@ -518,6 +521,7 @@ static GLboolean initExtensions(void)
     detectEWMH();
 
     // Find or create string format atoms
+    _glfw.x11._NULL = XInternAtom(_glfw.x11.display, "NULL", False);
     _glfw.x11.UTF8_STRING =
         XInternAtom(_glfw.x11.display, "UTF8_STRING", False);
     _glfw.x11.COMPOUND_STRING =
@@ -649,6 +653,8 @@ int _glfwPlatformInit(void)
     _glfw.x11.screen = DefaultScreen(_glfw.x11.display);
     _glfw.x11.root = RootWindow(_glfw.x11.display, _glfw.x11.screen);
     _glfw.x11.context = XUniqueContext();
+
+    pipe2(_glfw.x11.emptyEventFDs, O_CLOEXEC);
 
     if (!initExtensions())
         return GL_FALSE;
