@@ -37,5 +37,6 @@ fn main() {
              &Path::new(env!("OUT_DIR")).join("libglfw3.a"))
              .ok().expect("Failed to move file");
 
-    println!("cargo:rustc-flags=-L {} -l glfw3:static", env!("OUT_DIR"));
+    println!("cargo:rustc-link-lib=static=glfw3");
+    println!("cargo:rustc-link-search=native={}", env!("OUT_DIR"));
 }
